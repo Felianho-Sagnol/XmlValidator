@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="RegistreEmploye">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Employe" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Employe">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="nom" type="xsd:string"/>
+                <xsd:element name="position" type="xsd:string"/>
+                <xsd:element name="salair" type="xsd:string"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

@@ -1,0 +1,117 @@
+<div class="contaner mt-4">
+    <div class="row ">
+        <div class="col-md-2 col-sm-0 col-xs-0"></div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+            <div *ngIf="state" class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h3 class="card-title text-center">La validation de dtd interne.</h3>
+                    <hr>
+                    <h5 class="card-subtitle mb-2 text-muted">Comment ça marche ?</h5>
+                    <p class="card-text ml-5">
+                        Vous pouvez écrire directement le contenu de votre document dans le champs qui vous ait fourni ou choisir un fichier existant pour le valider.
+                    </p>
+                    <hr *ngIf="isSubmited">
+                    <h5 *ngIf="isSubmited" class="card-subtitle mb-2 text-muted">Resultat :</h5>
+                    <p *ngIf="isSubmited && isValid" style="color:green" class="card-text ml-5">
+                        Votre document est valide.
+                    </p>
+                    <p *ngIf="isSubmited && !isValid" style="color:red" class="card-text ml-5">
+                        {{ errorMessage }}
+                    </p>
+                    <hr>
+                    <p class="mt-4 mb-5"></p>
+                    <button (click)="openModaldtdInterne(templateDtdInterne)" class="mb-4 btn-sm btn btn-dark">Ecrire le contenu    ?</button><br>
+                    <button (click)="openModaldtdInterneFile(templateDtdInterneFile)" class="btn btn-dark btn-sm mb-2">Choisire un ficher ?</button>
+                    <p class="mt-2 mb-2"></p>
+                    <p class="text-center">
+                        <a (click)="changeState($event)" class="btn text-center"> Faire une validation externe ?</a>
+                    </p>
+                    <p class="mt-2"></p>
+                </div>
+            </div>
+            <div *ngIf="!state" class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h3 class="card-title text-center">La validation de dtd externe.</h3>
+                    <hr>
+                    <h5 class="card-subtitle mb-2 text-muted">Comment ça marche ?</h5>
+                    <p class="card-text ml-5">
+                        Vous devez choisir votre fichier xml et dtd externe pour valider.bb
+                    </p>
+                    <hr *ngIf="isSubmited">
+                    <h5 *ngIf="isSubmited" class="card-subtitle mb-2 text-muted">Resultat :</h5>
+                    <p *ngIf="isSubmited && isValid" style="color:green" class="card-text ml-5">
+                        Votre document est valide.
+                    </p>
+                    <h6 *ngIf="isSubmited && !isValid" style="color:red" class="ml-5">Documents non valides.</h6>
+                    <p *ngIf="isSubmited && !isValid" style="color:red" class="card-text ml-5">
+                        {{ errorMessage}}
+                    </p>
+                    <hr>
+                    <p class="mt-4 mb-5"></p>
+                    <button class="btn btn-sm btn-primary" (click)="openModaldtdExterne(templateDtdExterne)">Commencer !</button> <a (click)="changeState($event)" class="btn"> Faire une validation interne ?</a>
+
+                    <p class="mt-5 mb-5"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-0 col-xs-0"></div>
+    </div>
+</div>
+
+<ng-template #templateDtdInterne>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Validation Interne</h4>
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRefDtdInterne?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="internDtdForm" (ngSubmit)="onSubmitInternalValidation()">
+            <div class="form-group">
+                <textarea formControlName="content" class="form-control" id="id" rows="10" placeholder="Ecrire votre contenu ici ..."></textarea>
+            </div>
+            <button [disabled]="!internDtdForm.valid" type="submit" class="btn-sm btn btn-primary mr-2">Valider !</button>
+        </form>
+
+    </div>
+</ng-template>
+
+<ng-template #templateDtdExterne>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Validation Externe</h4>
+        <button type="button" class="btn-sm btn-close close pull-right" aria-label="Close" (click)="modalRefDtdExterne?.hide()">
+    <span aria-hidden="true" class="visually-hidden">&times;</span>
+  </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="f1">Le fichier dtd</label>
+                <input type="file" accept=".dtd" (change)="dtdFileLoad($event)" class="form-control-file" id="f1">
+            </div>
+            <div class="form-group">
+                <label for="f2">Le fichier xml</label>
+                <input type="file" accept=".xml" (change)="xmlFileLoad($event)" class="form-control-file" id="f2">
+            </div>
+            <button (click)="onExternalSubmit()" [disabled]="!externalFormIsValid()" class="btn-sm btn btn-primary mr-2">Valider !</button>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #templateDtdInterneFile>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Validation Interne avec un fichier</h4>
+        <button type="button" class="btn-sm btn-close close pull-right" aria-label="Close" (click)="modalRefDtdInternFile?.hide()">
+  <span aria-hidden="true" class="visually-hidden">&times;</span>
+</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="f2">Choisir le fichier xml <i *ngIf="isXmlInterneFileChoosen()" style="font-size:18px;color:green;" class="ml-2 far fa-check-circle"></i></label>
+                <input type="file" accept=".xml" (change)="xmlInterneByFile($event)" class="form-control-file" id="f2">
+            </div>
+            <button (click)="onSubmitInternalFile()" [disabled]="!isXmlInterneFileChoosen()" class="btn-sm btn btn-primary mr-2">Valider !</button>
+        </form>
+    </div>
+</ng-template>

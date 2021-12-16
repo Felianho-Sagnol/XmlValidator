@@ -1,0 +1,24 @@
+import lxml.etree as ET
+import io
+
+content = '''<?xml
+    version='1.1'
+    encoding='utf-8'
+?>
+<!DOCTYPE root [
+    <!ATTLIST test
+        attr (A | B | C) 'B'
+    >
+    <!ELEMENT test (#PCDATA)>
+    <!ELEMENT root (test)*>
+]>
+<root></root>'''
+
+tree = ET.parse(io.BytesIO(content))
+info = tree.docinfo
+dtd = info.internalDTD
+
+for elt in dtd.elements():
+    print(elt)
+    print(elt.content)
+    print
